@@ -60,35 +60,40 @@ function transformData(children, parents = []) {
     }
 }
 
-function sortList(rawList, method) {
+function sortList(unsortedList, method) {
+    
+    // give tasks with no priority a priority of 10 so they are last
+    for (const unsorted in unsortedList) {
+        if (typeof unsortedList[unsorted].priority === "undefined") unsortedList[unsorted].priority = "10";        
+    }
     
     switch (method){
         case "priority":
-             rawList.sort(sortPriority);
+             unsortedList.sort(sortPriority);
             break;
 
         case "priority desc":
-            rawList.sort(sortPriorityDesc);
+            unsortedList.sort(sortPriorityDesc);
             break;
 
         case "created":
-            rawList.sort(sortCreated);
+            unsortedList.sort(sortCreated);
             break;
 
         case "created desc":
-            rawList.sort(sortCreatedDesc);
+            unsortedList.sort(sortCreatedDesc);
             break;
 
         case "modified":
-            rawList.sort(sortModified);
+            unsortedList.sort(sortModified);
             break;
 
         case "modified desc":
-            rawList.sort(sortModifiedDesc);
+            unsortedList.sort(sortModifiedDesc);
             break;
     }
 
-    return rawList;
+    return unsortedList;
 }
 
 module.exports = {
