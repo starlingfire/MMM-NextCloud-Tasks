@@ -42,6 +42,7 @@ var config = {
                 hideCompletedTasks: true,
                 sortMethod: "<SORT_METHOD>",
                 colorize: true,
+                showCompletion: true,
                 webDavAuth: {
                     username: "<NEXTCLOUD_APP_USERNAME>",
                     password: "<NEXTCLOUD_APP_PASSWORD>",
@@ -62,6 +63,7 @@ var config = {
 | `hideCompletedTasks` | *Optional*: should completed tasks show up or not
 | `sortMethod`         | *Optional*: How to sort tasks. Options: "priority" "priority desc" "created" "created desc" "modified" "modified desc"
 | `colorize`           | *Optional*: Should the icons be colorized based on priority?
+| `showCompletion`     | *Optional*: Shows the percentage of completion
 
 ## Screenshots
 
