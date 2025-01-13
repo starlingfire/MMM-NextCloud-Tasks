@@ -42,6 +42,8 @@ var config = {
                 hideCompletedTasks: true,
                 sortMethod: "<SORT_METHOD>",
                 colorize: true,
+                startsInDays: 7,
+                dueInDays: 14, // not tested yet how startsInDays interferes with dueInDays - better use one option only!
                 webDavAuth: {
                     username: "<NEXTCLOUD_APP_USERNAME>",
                     password: "<NEXTCLOUD_APP_PASSWORD>",

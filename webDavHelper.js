@@ -11,7 +11,7 @@ function parseList(icsStrings, config) {
     let startsInDays = (config && config.startsInDays) || 0;
     let dueInDays = (config && config.dueInDays) || 0;
     let now = new Date();
-    let startsDeadline = new Date(now.getTime() + startsInDays * 86400000);
+    let startsDeadline = new Date(now.getTime() + startsInDays * 86400000); // this is 24 * 60 * 60 * 1000 = 1 day in milliseconds
     let dueDeadline = new Date(now.getTime() + dueInDays * 86400000);
 
     let elements = [];
