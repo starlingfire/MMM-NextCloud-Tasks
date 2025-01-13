@@ -62,6 +62,8 @@ var config = {
 | `hideCompletedTasks` | *Optional*: should completed tasks show up or not
 | `sortMethod`         | *Optional*: How to sort tasks. Options: "priority" "priority desc" "created" "created desc" "modified" "modified desc"
 | `colorize`           | *Optional*: Should the icons be colorized based on priority?
+| `startsInDays`       | *Optional*: Filter tasks which start within x days. Set to 0 to show all.
+| `dueInDays`          | *Optional*: Filter tasks which are due within x days. Set to 0 to show all.
 
 ## Screenshots
 
