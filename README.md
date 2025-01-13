@@ -43,7 +43,7 @@ var config = {
                 sortMethod: "<SORT_METHOD>",
                 colorize: true,
                 startsInDays: 7,
-                dueInDays: 14, // not tested yet how startsInDays interferes with dueInDays - better use one option only!
+                dueInDays: 14, 
                 webDavAuth: {
                     username: "<NEXTCLOUD_APP_USERNAME>",
                     password: "<NEXTCLOUD_APP_PASSWORD>",
@@ -64,8 +64,11 @@ var config = {
 | `hideCompletedTasks` | *Optional*: should completed tasks show up or not
 | `sortMethod`         | *Optional*: How to sort tasks. Options: "priority" "priority desc" "created" "created desc" "modified" "modified desc"
 | `colorize`           | *Optional*: Should the icons be colorized based on priority?
-| `startsInDays`       | *Optional*: Filter tasks which start within x days. Set to 0 to show all.
-| `dueInDays`          | *Optional*: Filter tasks which are due within x days. Set to 0 to show all.
+| `startsInDays`       | *Optional*: Filter tasks which start within x days. Set to 0 to show all. *see note
+| `dueInDays`          | *Optional*: Filter tasks which are due within x days. Set to 0 to show all. *see note
+
+### Note:
+If both conditions `startsInDays`and `dueInDays`are set both are checked after each other. So when one or both conditions are true the task will be shown.
 
 ## Screenshots
 
