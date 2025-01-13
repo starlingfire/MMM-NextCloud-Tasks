@@ -4,7 +4,13 @@ const ical = require('node-ical');
 const transformer = require("./transformer");
 
 function initWebDav(config) {
-    return client = createClient(config.listUrl, config.webDavAuth);
+    return client = createClient(config.listUrl, {
+        username: config.webDavAuth.username,
+        password: config.webDavAuth.password,
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+        timeout: 60000 // Increase timeout to 60 seconds
+    });
 }
 
 function parseList(icsStrings, config) {
@@ -34,8 +40,19 @@ async function fetchList(config) {
 
     let icsStrings = [];
     for (const element of directoryItems) {
-        const icsStr = await client.getFileContents(element.filename, { format: "text" });
-        //console.log(icsStr);
+        let icsStr;
+        let retries = 3;
+        while (retries > 0) {
+            try {
+                icsStr = await client.getFileContents(element.filename, { format: "text" });
+                break; // Exit loop if successful
+            } catch (error) {
+                retries--;
+                if (retries === 0) {
+                    throw new Error("Failed to fetch file contents after multiple attempts");
+                }
+            }
+        }
         icsStrings.push(icsStr);
     }
     return parseList(icsStrings, config);
