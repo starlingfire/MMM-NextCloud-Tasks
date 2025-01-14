@@ -24,7 +24,8 @@ Current development status: **released** \
 
 1. Navigate to your local `MagicMirror/modules` directory
 2. run `git clone https://github.com/starlingfire/MMM-NextCloud-Tasks.git`
-2. run `npm install` to install dependencies. (This could take several minutes because of the WebDav module)
+3. `cd MMM-NextCloud-Tasks`
+4. run `npm install` to install dependencies. (This could take several minutes because of the WebDav module)
 
 ## Updating the module
 From `MagicMirror/modules/MMM-Nextcloud-Tasks` use `git pull`
