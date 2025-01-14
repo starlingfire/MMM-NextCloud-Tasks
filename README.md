@@ -42,8 +42,13 @@ var config = {
                 hideCompletedTasks: true,
                 sortMethod: "<SORT_METHOD>",
                 colorize: true,
-                startsInDays: 7,
-                dueInDays: 14, 
+                startsInDays: 14,
+                displayStartDate: true,
+                dueInDays: 14,
+                displayDueDate: true,
+                showWithoutStart: true,
+                showWithoutDue: true,
+                dateFormat: "DD.MM.YYYY", 
                 webDavAuth: {
                     username: "<NEXTCLOUD_APP_USERNAME>",
                     password: "<NEXTCLOUD_APP_PASSWORD>",
@@ -64,8 +69,13 @@ var config = {
 | `hideCompletedTasks` | *Optional*: should completed tasks show up or not
 | `sortMethod`         | *Optional*: How to sort tasks. Options: "priority" "priority desc" "created" "created desc" "modified" "modified desc"
 | `colorize`           | *Optional*: Should the icons be colorized based on priority?
-| `startsInDays`       | *Optional*: Filter tasks which start within x days. Set to 0 to show all. *see note
-| `dueInDays`          | *Optional*: Filter tasks which are due within x days. Set to 0 to show all. *see note
+| `startsInDays`       | *Optional*: Filter tasks which start within x days. Default `999999`. *see note
+| `dueInDays`          | *Optional*: Filter tasks which are due within x days. Default `999999` *see note
+| `displayStartDate`   | *Optional*: Should the start date of tasks be displayed? Default `true`
+| `displayDueDate`     | *Optional*: Should the due date of tasks be displayed? Default `true`
+| `showWithoutStart`   | *Optional*: Should tasks without a start date be shown? Default `true`
+| `showWithoutDue`     | *Optional*: Should tasks without a due date be shown? Default `true`
+| `dateFormat`         | *Optional*: Format for displaying dates. Default `DD.MM.YYYY` Uses [moment.js formats](https://momentjs.com/docs/#/displaying/format/)
 
 ### Note:
 If both conditions `startsInDays`and `dueInDays`are set both are checked after each other. So when one or both conditions are true the task will be shown.

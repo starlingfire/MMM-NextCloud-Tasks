@@ -24,3 +24,11 @@
 .MMM-NextCloud-Tasks-wrapper > ul {
     padding: 0;
 }
+
+.MMM-NextCloud-Tasks-StartDate {
+    color: var(--color-text-dimmed);
+}
+
+.MMM-NextCloud-Tasks-DueDate {
+    color: var(--color-text-dimmed);
+}

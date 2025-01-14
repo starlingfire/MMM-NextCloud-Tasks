@@ -13,8 +13,13 @@ Module.register("MMM-NextCloud-Tasks", {
 		hideCompletedTasks: true,
 		sortMethod: "priority",
 		colorize: false,
-		startsInDays: 0,
-		dueInDays: 0,
+		startsInDays: 999999,
+		displayStartDate: true,
+		dueInDays: 999999,
+		displayDueDate: true,
+		showWithoutStart: true,
+        showWithoutDue: true,
+		dateFormat: "DD.MM.YYYY",
 	},
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
@@ -91,19 +96,53 @@ Module.register("MMM-NextCloud-Tasks", {
 
 		let ul = document.createElement("ul");
 		for (const element of children) {
-			self.config
 			let p = element.priority;
 			if (element.status !== "COMPLETED" || self.config.hideCompletedTasks === false) {
-				icon = (element.status === "COMPLETED" ? checked : unchecked );
+				const now = new Date();
+
+				if (element.start) {
+					const start = new Date(element.start);
+					const daysUntilStart = (start - now) / (1000 * 60 * 60 * 24);
+					if (daysUntilStart > self.config.startsInDays) {
+						continue;
+					}
+				} else if (!self.config.showWithoutStart) {
+					continue;
+				}
+
+				if (element.end) {
+					const end = new Date(element.end);
+					const daysUntilDue = (end - now) / (1000 * 60 * 60 * 24);
+					if (daysUntilDue > self.config.dueInDays) {
+						continue;
+					}
+				} else if (!self.config.showWithoutDue) {
+					continue;
+				}
+
+				let icon = (element.status === "COMPLETED" ? checked : unchecked );
 				let li = document.createElement("li");
-				let color = (p < 5 ? red : (p == 5 ? yellow : (p <= 9 ? blue : grey)))
-				
+				let color = (p < 5 ? red : (p == 5 ? yellow : (p <= 9 ? blue : grey)));
+
 				if (self.config.colorize) {
 					li.innerHTML = color + icon + endSpan + " " + element.summary;
 				} else {
 					li.innerHTML = icon + " " + element.summary;
 				}
-				
+
+				if (self.config.displayStartDate && element.start) {
+					let spanStart = document.createElement("span");
+					spanStart.className = "MMM-NextCloud-Tasks-StartDate";
+					spanStart.textContent = " " + moment(element.start).format(self.config.dateFormat);
+					li.appendChild(spanStart);
+				}
+				if (self.config.displayDueDate && element.end) {
+					let spanDue = document.createElement("span");
+					spanDue.className = "MMM-NextCloud-Tasks-DueDate";
+					spanDue.textContent = " " + moment(element.end).format(self.config.dateFormat);
+					li.appendChild(spanDue);
+				}
+
 				if (typeof element.children !== "undefined") {
 					let childList = self.renderList(element.children);
 					li.appendChild(childList);
