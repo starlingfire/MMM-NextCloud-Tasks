@@ -41,6 +41,10 @@
     font-size: var(--font-size-xsmall);
 }
 
+.MMM-Nextcloud-Tasks-New-Config-Note
+{
+    font-size: var(--font-size-xsmall);
+}
 
 /* TODO REMOVE after development */
 body {

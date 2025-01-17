@@ -33,14 +33,20 @@ Module.register("MMM-NextCloud-Tasks", {
 		//Flag for check if module is loaded
 		self.loaded = false;
 
+		// A little fallback if the config is still of the old type
 		if (self.verifyConfig(self.config)) {
-            if (self.isListUrlSingleValue(self.config.listUrl)) {
-                self.error = "Config Error: 'listUrl' should be an array now as the module now supports multiple urls. Example:\n" +
-                             "Old: listUrl: 'https://my-nextcloud.com/remote.php/dav/calendars/cornelius/private-tasks/'\n" +
-                             "New: listUrl: ['https://my-nextcloud.com/remote.php/dav/calendars/cornelius/private-tasks/']";
-                self.updateDom();
-                return;
-            }
+			if (self.isListUrlSingleValue(self.config.listUrl)) {
+				self.error = "A little config Error in MMM-Nextcloud-Task: 'listUrl' should be an array now as the module now supports multiple urls. Example:<br>" +
+							 "<div class='MMM-Nextcloud-Tasks-New-Config-Note'>" +
+							 "<span style='color: #e34c26;'>Old:</span><br> <span style='font-family: Courier; color: lightblue;'>listUrl</span>: <span style='font-family: Courier; color: brown;'>\"https://my-nextcloud.com/remote.php/dav/calendars/cornelius/private-tasks/\"</span><span style='font-family: Courier; color: white;'>,</span><br>" +
+							 "<span style='color: #4caf50;'>New:</span><br> <span style='font-family: Courier; color: lightblue;'>listUrl</span>: [<span style='font-family: Courier; color: brown;'>\"https://my-nextcloud.com/remote.php/dav/calendars/cornelius/private-tasks/\"</span><span style='font-family: Courier; color: white;'>,</span>]"  + 
+							 "<span style='color: #4caf50;'><br>Example with two urls:</span><br> <span style='font-family: Courier; color: lightblue;'>listUrl</span>: [" +
+							 "<span style='font-family: Courier; color: brown;'>\"https://my-nextcloud.com/remote.php/dav/calendars/cornelius/private-tasks/\"</span><span style='font-family: Courier; color: white;'>,</span><br> " +
+							 "<span style='font-family: Courier; color: brown;'>\"https://my-nextcloud.com/remote.php/dav/calendars/cornelius/work-tasks/\"</span><span style='font-family: Courier; color: white;'></span>]," +
+							 "</div>";
+				self.updateDom();
+				return;
+			}
 
             // Schedule update timer.
             self.getData();
@@ -60,19 +66,6 @@ Module.register("MMM-NextCloud-Tasks", {
     },
 
 
-		if(self.verifyConfig(self.config)) {
-			// Schedule update timer.
-			self.getData();
-			setInterval(function() {
-				self.getData();
-				self.updateDom();
-			}, self.config.updateInterval);
-		} else {
-			Log.info("config invalid");
-			self.error = "config invalid";
-			self.updateDom();
-		}
-	},
 
 	/*
 	 * getData
@@ -153,14 +146,13 @@ Module.register("MMM-NextCloud-Tasks", {
 
 				let icon = (element.status === "COMPLETED" ? checked : unchecked );
 				let li = document.createElement("li");
-				li.id = element.uid;
 				let color = (p < 5 ? red : (p == 5 ? yellow : (p <= 9 ? blue : grey)));
 
 				// create the list item either with or without color
 				if (self.config.colorize) {
-					li.innerHTML = "<div class='MMM-NextCloud-Task-List-Item'>" + color + icon + endSpan + " " + element.summary + "</div>";
+					li.innerHTML = "<div class='MMM-NextCloud-Task-List-Item' id='" + element.uid + "'>" + color + icon + endSpan + " " + element.summary + "</div>";
 				} else {
-					li.innerHTML = "<div class='MMM-NextCloud-Task-List-Item'>" + icon + " " + element.summary + "</div>";
+					li.innerHTML = "<div class='MMM-NextCloud-Task-List-Item' id='" + element.uid + "'>" + icon + " " + element.summary + "</div>";
 				}
 
 				// add start and due date if available
