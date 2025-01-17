@@ -25,10 +25,24 @@
     padding: 0;
 }
 
+.MMM-NextCloud-Task-List-Item {
+    margin-top: -0.2em;
+    margin-bottom: -1em;
+}
 .MMM-NextCloud-Tasks-StartDate {
-    color: var(--color-text-dimmed);
+    /* color: var(--color-text-dimmed); */
+    color: rgb(166, 175, 206);
+    font-size: var(--font-size-xsmall); 
 }
 
 .MMM-NextCloud-Tasks-DueDate {
-    color: var(--color-text-dimmed);
+    /* color: var(--color-text-dimmed); */
+    color: rgb(204, 150, 150);
+    font-size: var(--font-size-xsmall);
+}
+
+
+/* TODO REMOVE after development */
+body {
+    cursor: default;
 }

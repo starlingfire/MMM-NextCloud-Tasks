@@ -80,9 +80,13 @@ Module.register("MMM-NextCloud-Tasks", {
 		if (self.error) {
 			wrapper.innerHTML= "<div>" + self.error + "</div>";
 		}
+		
+		// Initialize long press handlers after the DOM is updated
+		this.initLongPressHandlers();
 		return wrapper;
 	},
 
+	// create list of tasks
 	renderList: function (children) {
 		let self = this;
 
@@ -122,24 +126,27 @@ Module.register("MMM-NextCloud-Tasks", {
 
 				let icon = (element.status === "COMPLETED" ? checked : unchecked );
 				let li = document.createElement("li");
+				li.id = element.uid;
 				let color = (p < 5 ? red : (p == 5 ? yellow : (p <= 9 ? blue : grey)));
 
+				// create the list item either with or without color
 				if (self.config.colorize) {
-					li.innerHTML = color + icon + endSpan + " " + element.summary;
+					li.innerHTML = "<div class='MMM-NextCloud-Task-List-Item'>" + color + icon + endSpan + " " + element.summary + "</div>";
 				} else {
-					li.innerHTML = icon + " " + element.summary;
+					li.innerHTML = "<div class='MMM-NextCloud-Task-List-Item'>" + icon + " " + element.summary + "</div>";
 				}
 
+				// add start and due date if available
 				if (self.config.displayStartDate && element.start) {
 					let spanStart = document.createElement("span");
 					spanStart.className = "MMM-NextCloud-Tasks-StartDate";
 					spanStart.textContent = " " + moment(element.start).format(self.config.dateFormat);
 					li.appendChild(spanStart);
 				}
-				if (self.config.displayDueDate && element.end) {
+				if (self.config.displayDueDate && element.due) {
 					let spanDue = document.createElement("span");
 					spanDue.className = "MMM-NextCloud-Tasks-DueDate";
-					spanDue.textContent = " " + moment(element.end).format(self.config.dateFormat);
+					spanDue.textContent = " " + moment(element.due).format(self.config.dateFormat);
 					li.appendChild(spanDue);
 				}
 
@@ -151,6 +158,58 @@ Module.register("MMM-NextCloud-Tasks", {
 			}
 		}
 		return ul;
+	},
+
+	// Animate list element when long clicking
+	initLongPressHandlers: function() {
+		const items = document.querySelectorAll(".MMM-NextCloud-Tasks-wrapper li");
+		items.forEach((item) => {
+			let pressTimer = null;
+			let startTime = 0;
+			const duration = 3000; // 3 seconds
+			let blurInterval = null;
+
+			const resetEffects = () => {
+				clearTimeout(pressTimer);
+				clearInterval(blurInterval);
+				item.style.filter = "none";
+				item.style.opacity = "1";
+			};
+
+			const startEffects = () => {
+				startTime = Date.now();
+				blurInterval = setInterval(() => {
+					const elapsed = Date.now() - startTime;
+					if (elapsed >= duration) {
+						clearInterval(blurInterval);
+						toggleCheck(item);
+					} else {
+						const progress = elapsed / duration;
+						item.style.filter = `blur(${4 * progress}px)`;
+						item.style.opacity = `${1 - progress}`;
+					}
+				}, 50);
+			};
+
+			const toggleCheck = (listItem) => {
+				const iconSpan = listItem.querySelector(".fa");
+				if (!iconSpan) return;
+				const isChecked = iconSpan.classList.contains("fa-check-square");
+				iconSpan.classList.toggle("fa-check-square", !isChecked);
+				iconSpan.classList.toggle("fa-square", isChecked);
+				const newState = isChecked ? "unchecked" : "checked";
+				toggleTaskStatus(newState, listItem.id); // call into webDavHelper.js
+				resetEffects();
+			};
+
+			item.addEventListener("mousedown", () => {
+				resetEffects();
+				pressTimer = setTimeout(() => {}, duration);
+				startEffects();
+			});
+			item.addEventListener("mouseup", resetEffects);
+			item.addEventListener("mouseleave", resetEffects);
+		});
 	},
 
 	getStyles: function () {
