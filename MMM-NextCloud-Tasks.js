@@ -33,6 +33,33 @@ Module.register("MMM-NextCloud-Tasks", {
 		//Flag for check if module is loaded
 		self.loaded = false;
 
+		if (self.verifyConfig(self.config)) {
+            if (self.isListUrlSingleValue(self.config.listUrl)) {
+                self.error = "Config Error: 'listUrl' should be an array now as the module now supports multiple urls. Example:\n" +
+                             "Old: listUrl: 'https://my-nextcloud.com/remote.php/dav/calendars/cornelius/private-tasks/'\n" +
+                             "New: listUrl: ['https://my-nextcloud.com/remote.php/dav/calendars/cornelius/private-tasks/']";
+                self.updateDom();
+                return;
+            }
+
+            // Schedule update timer.
+            self.getData();
+            setInterval(function() {
+                self.getData();
+                self.updateDom();
+            }, self.config.updateInterval);
+        } else {
+            Log.info("config invalid");
+            self.error = "config invalid";
+            self.updateDom();
+        }
+    },
+
+    isListUrlSingleValue: function(listUrl) {
+        return typeof listUrl === "string";
+    },
+
+
 		if(self.verifyConfig(self.config)) {
 			// Schedule update timer.
 			self.getData();
@@ -178,6 +205,7 @@ Module.register("MMM-NextCloud-Tasks", {
 
 			const startEffects = () => {
 				startTime = Date.now();
+				const effectSpeed = duration / 50; // Use a fraction of the duration variable
 				blurInterval = setInterval(() => {
 					const elapsed = Date.now() - startTime;
 					if (elapsed >= duration) {
@@ -188,7 +216,7 @@ Module.register("MMM-NextCloud-Tasks", {
 						item.style.filter = `blur(${4 * progress}px)`;
 						item.style.opacity = `${1 - progress}`;
 					}
-				}, 50);
+				}, effectSpeed);
 			};
 
 			const toggleCheck = (listItem) => {
