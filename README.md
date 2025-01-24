@@ -4,6 +4,8 @@ This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror
 
 This module loads a ToDo list via webDav from the NextCloud Tasks app using the "private link" and [NextCloud Managed Devices](https://docs.nextcloud.com/server/latest/user_manual/en/session_management.html#managing-devices)
 
+You can toggle the status of the task via longpress / long touch and it will be sent to the Server.
+
 Current development status: **released** \
 ![Small Screenshot](/assets/small_screenshot.png?raw=true)
 
@@ -84,8 +86,14 @@ var config = {
 | `showWithoutDue`     | *Optional*: Should tasks without a due date be shown? Default `true`
 | `dateFormat`         | *Optional*: Format for displaying dates. Default `DD.MM.YYYY` Uses [moment.js formats](https://momentjs.com/docs/#/displaying/format/)
 
+
 ### Note:
 If both conditions `startsInDays`and `dueInDays`are set both are checked after each other. So when one or both conditions are true the task will be shown.
+
+### The glow effect:
+When you toggle a task there is a glow effect which strangely was offset. You will know what I mean if you see that there is s.th. wrong with the effect.
+If that is the case please open an issue - then another setting options needs to be made to fix the overlay. For a quick fix you can change a line of code in `MMM-Nextcloud-Tasks.js':
+`overlay.style.top = (item.offsetTop + 3) + 'px'; // this is a weird thing as the overlay is not exactly on top of the item without the +2`
 
 ## Screenshots
 

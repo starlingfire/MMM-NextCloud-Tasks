@@ -91,7 +91,15 @@ function sortList(rawList, method) {
     return rawList;
 }
 
+function appendUrlIndex(rawList, i) {
+    return rawList.map(element => {
+        element.urlIndex = i;
+        return element;
+    });
+}
+
 module.exports = {
     transformData: transformData,
-    sortList: sortList
+    sortList: sortList,
+    appendUrlIndex: appendUrlIndex
 }

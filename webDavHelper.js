@@ -3,18 +3,18 @@ const { createClient } = require("webdav");
 const ical = require('node-ical');
 const transformer = require("./transformer");
 
+// TODO: this support a single instance of NexCloud as there is just one webDavAuth, however multiple urls are supported
 function initWebDav(config) {
     return client = createClient(config.listUrl, config.webDavAuth);
 }
 
-function parseList(icsStrings, config) {
+function parseList(icsStrings) {
     let elements = [];
-    for (let icsData of icsStrings) {
-        if (typeof icsData !== "string") icsData = icsData.toString();
-        const icsObj = ical.sync.parseICS(icsData);
-
+    for (const { filename, icsStr } of icsStrings) {
+        const icsObj = ical.sync.parseICS(icsStr);
         Object.values(icsObj).forEach(element => {
             if (element.type === 'VTODO') {
+                element.filename = filename; // Add filename to the element
                 elements.push(element);
             }
         });
@@ -22,20 +22,25 @@ function parseList(icsStrings, config) {
     return elements;
 }
 
+
 async function fetchList(config) {
+    const client = initWebDav(config);
+    const directoryItems = await client.getDirectoryContents("/");
+    console.log("[MMM-Nextcloud-Tasks] fetchList:", directoryItems);
+
     let icsStrings = [];
-    for (const url of config.listUrl) {
-        const client = createClient(url, config.webDavAuth);
-        const directoryItems = await client.getDirectoryContents("/");
-        for (const element of directoryItems) {
-            const icsStr = await client.getFileContents(element.filename, { format: "text" });
-            icsStrings.push(icsStr);
-        }
+    for (const element of directoryItems) {
+        const icsStr = await client.getFileContents(element.filename, { format: "text" });
+        //console.log(icsStr);
+        icsStrings.push({ filename: element.filename, icsStr });
     }
     return icsStrings;
 }
 
+
+
 module.exports = {
     parseList: parseList,
-    fetchList: fetchList
+    fetchList: fetchList,
+    initWebDav: initWebDav,
 };
