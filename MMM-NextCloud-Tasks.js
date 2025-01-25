@@ -111,10 +111,10 @@ Module.register("MMM-NextCloud-Tasks", {
 
 		// embed font awesome for testing on windows as you cannot see the icons otherwise
 		// TODO: comment out after testing
-		let link = document.createElement("link");
+	/* 	let link = document.createElement("link");
 		link.rel = "stylesheet";
 		link.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css";
-		document.head.appendChild(link);
+		document.head.appendChild(link); */
 		// end of fontawesome embed
 
 		// create element wrapper for show into the module
@@ -265,61 +265,50 @@ Module.register("MMM-NextCloud-Tasks", {
 
 			const startEffects = () => {
 				startTime = Date.now();
-				const effectSpeed = duration / 50; // Use a fraction of the duration variable
+				const effectSpeed = duration / 50;
 				blurInterval = setInterval(() => {
 					const elapsed = Date.now() - startTime;
-					// timer has run out
 					if (elapsed >= duration) {
 						clearInterval(blurInterval);
 						newState = toggleCheck(item);
 						toggleEffectOnTimerEnd(item);
 						console.debug("[MMM-Nextcloud-Tasks] new state: " + newState);
 						console.debug("[MMM-Nextcloud-Tasks] item id: " + item.id);
-						
+
 						this.sendSocketNotification("MMM-NextCloud-Tasks-TOGGLE", {
 							id: item.id,
 							status: newState,
 							config: this.config,
 							urlIndex: item.getAttribute("data-url-index"),
 							filename: item.getAttribute("vtodo-filename")
-					});
-				resetEffects();
-
+						});
+						resetEffects();
 					} else {
 						const progress = elapsed / duration;
 						item.style.filter = `blur(${4 * progress}px)`;
 						item.style.opacity = `${1 - progress}`;
 					}
 				}, effectSpeed);
-
 			};
 
-			// after the timer has run out a little effect
 			const toggleEffectOnTimerEnd = (item) => {
 				console.debug("[MMM-Nextcloud-Tasks] toggleEffectOnTimerEnd called");
-				
-				// play sounds/task_finished.wav
-				this.audio.play().catch(error => {
-					console.error('Error playing audio:', error);
-				});
+				this.audio.play().catch(error => console.error("Error playing audio:", error));
+
 				startTime = Date.now();
 				const effectDuration = 1200;
-
-				// Create overlay with red text
 				const overlay = item.cloneNode(true);
-				overlay.style.position = 'absolute';
-				overlay.style.top = (item.offsetTop + 3) + 'px'; // this is a weird thing as the overlay is not exactly on top of the item without the additional number
-				overlay.style.left = item.offsetLeft + 'px';
-				overlay.style.color = 'red';
-				overlay.style.zIndex = '100000';
-				overlay.style.pointerEvents = 'none';
-				overlay.style.filter = 'none';
-				overlay.style.opacity = '1';
 
+				overlay.style.position = "absolute";
+				overlay.style.top = (item.offsetTop + 3) + "px";
+				overlay.style.left = item.offsetLeft + "px";
+				overlay.style.color = "red";
+				overlay.style.zIndex = "100000";
+				overlay.style.pointerEvents = "none";
+				overlay.style.filter = "none";
+				overlay.style.opacity = "1";
 
-				// Define keyframe animation for fading overlay from orange to bright and then to transparent
-				// we need the transparent so that there is a fluent animation
-				const styleEl = document.createElement('style');
+				const styleEl = document.createElement("style");
 				styleEl.innerHTML = `
 				@keyframes fadeToBright {
 					0% {
@@ -335,61 +324,46 @@ Module.register("MMM-NextCloud-Tasks", {
 					}
 				}
 				`;
-
-
-/* 				// Define keyframe animation for fading overlay from orange to bright
-				const styleEl = document.createElement('style');
-				styleEl.innerHTML = `
-				@keyframes fadeToBright {
-					0% {
-						color: red;
-					}
-					100% {
-						color: var(--color-text-bright);
-					}
-				}
-				`; */
 				document.head.appendChild(styleEl);
 
-				// Animate overlay color
 				overlay.style.animation = `fadeToBright ${effectDuration}ms forwards`;
 				item.parentElement.appendChild(overlay);
 
-				// Animate original item to reverse its glow
 				item.style.transition = `filter ${effectDuration}ms ease-in-out`;
-				item.style.filter = 'blur(10px)';
+				item.style.filter = "blur(10px)";
 				setTimeout(() => {
-					item.style.filter = 'blur(0)';
+					item.style.filter = "blur(0)";
 				}, effectDuration);
 
-				// Cleanup
 				setTimeout(() => {
 					overlay.remove();
-					item.style.transition = 'none';
-					item.style.filter = 'none';
+					item.style.transition = "none";
+					item.style.filter = "none";
 				}, effectDuration + 1000);
 			};
-			
-			
+
 			const toggleCheck = (listItem) => {
 				const iconSpan = listItem.querySelector(".fa");
 				if (!iconSpan) return;
 				const isChecked = iconSpan.classList.contains("fa-check-square");
 				iconSpan.classList.toggle("fa-check-square", !isChecked);
 				iconSpan.classList.toggle("fa-square", isChecked);
-				const newState = isChecked ? "unchecked" : "checked";
-				return newState
+				return isChecked ? "unchecked" : "checked";
 			};
 
-
-			item.addEventListener("mousedown", () => {
-				Log.info("mousedown event on item: " + item.id);
+			const startHandler = () => {
+				Log.info("touch/mouse start on item: " + item.id);
 				resetEffects();
-				pressTimer = setTimeout(() => { }, duration);
+				pressTimer = setTimeout(() => {}, duration);
 				startEffects(item);
-			});
+			};
+
+			item.addEventListener("mousedown", startHandler);
+			item.addEventListener("touchstart", startHandler, { passive: true });
 			item.addEventListener("mouseup", resetEffects);
 			item.addEventListener("mouseleave", resetEffects);
+			item.addEventListener("touchend", resetEffects);
+			item.addEventListener("touchcancel", resetEffects);
 		});
 	},
 
