@@ -157,7 +157,7 @@ Module.register("MMM-NextCloud-Tasks", {
 		for (const element of children) {
 			if (element.status === "COMPLETED") {
 				if (typeof this.config.hideCompletedTasksAfter === "number") {
-					const completedDate = new Date(element.completedAt || element.end || element.due || element.created);
+					const completedDate = new Date(element.completed.split(':')[1]);
 					const daysSinceCompleted = (new Date() - completedDate) / (1000 * 60 * 60 * 24);
 					if (daysSinceCompleted > this.config.hideCompletedTasksAfter) {
 						continue;
