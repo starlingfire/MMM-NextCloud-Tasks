@@ -76,7 +76,7 @@ var config = {
 | `webDavAuth`         | *Required*: WebDav Authentication object consisting of username and password. <br> Example: `{username: "<NEXTCLOUD_APP_USERNAME>", password: "<NEXTCLOUD_APP_PASSWORD>",}`
 | `toggleTime`         | *Optional*: How long do you need to click / touch the task list item to toggle it. Default `1600` (1.6 seconds)
 | `updateInterval`     | *Optional*: How often should the data be refreshed (in milliseconds)
-| `hideCompletedTasks` | *Optional*: should completed tasks show up or not
+| ~~`hideCompletedTasks`~~ | ~~*Optional*: should completed tasks show up or not~~
 | `sortMethod`         | *Optional*: How to sort tasks. Options: "priority" "priority desc" "created" "created desc" "modified" "modified desc"
 | `colorize`           | *Optional*: Should the icons be colorized based on priority?
 | `startsInDays`       | *Optional*: Filter tasks which start within x days. Default `999999`. *see note
