@@ -24,7 +24,10 @@ Module.register("MMM-NextCloud-Tasks", {
 		hideCompletedTasksAfter: 1, // 1 day
 		dateFormat: "DD.MM.YYYY",
 		headings: [null],
-		playSound: true
+		playSound: true,
+		offsetTop: 0,
+		offsetLeft: 0,
+		toggleTime: 1600 // mseconds
 	},
 
 	requiresVersion: "2.1.0", // Required version of MagicMirror
@@ -253,7 +256,6 @@ Module.register("MMM-NextCloud-Tasks", {
 		items.forEach((item) => {
 			let pressTimer = null;
 			let startTime = 0;
-			const duration = 800; // mseconds
 			let blurInterval = null;
 
 			const resetEffects = () => {
@@ -265,10 +267,10 @@ Module.register("MMM-NextCloud-Tasks", {
 
 			const startEffects = () => {
 				startTime = Date.now();
-				const effectSpeed = duration / 50;
+				const effectSpeed = toggleTime / 50;
 				blurInterval = setInterval(() => {
 					const elapsed = Date.now() - startTime;
-					if (elapsed >= duration) {
+					if (elapsed >= toggleTime) {
 						clearInterval(blurInterval);
 						newState = toggleCheck(item);
 						toggleEffectOnTimerEnd(item);
@@ -284,7 +286,7 @@ Module.register("MMM-NextCloud-Tasks", {
 						});
 						resetEffects();
 					} else {
-						const progress = elapsed / duration;
+						const progress = elapsed / toggleTime;
 						item.style.filter = `blur(${4 * progress}px)`;
 						item.style.opacity = `${1 - progress}`;
 					}
@@ -296,12 +298,12 @@ Module.register("MMM-NextCloud-Tasks", {
 				this.audio.play().catch(error => console.error("Error playing audio:", error));
 
 				startTime = Date.now();
-				const effectDuration = 1200;
+				const effecttoggleTime = 1200;
 				const overlay = item.cloneNode(true);
 
 				overlay.style.position = "absolute";
-				overlay.style.top = (item.offsetTop + 3) + "px";
-				overlay.style.left = item.offsetLeft + "px";
+				overlay.style.top = (item.offsetTop + offsetTop) + "px";
+				overlay.style.left = (item.offsetLeft + offsetLeft)+"px";
 				overlay.style.color = "red";
 				overlay.style.zIndex = "100000";
 				overlay.style.pointerEvents = "none";
@@ -326,20 +328,20 @@ Module.register("MMM-NextCloud-Tasks", {
 				`;
 				document.head.appendChild(styleEl);
 
-				overlay.style.animation = `fadeToBright ${effectDuration}ms forwards`;
+				overlay.style.animation = `fadeToBright ${effecttoggleTime}ms forwards`;
 				item.parentElement.appendChild(overlay);
 
-				item.style.transition = `filter ${effectDuration}ms ease-in-out`;
+				item.style.transition = `filter ${effecttoggleTime}ms ease-in-out`;
 				item.style.filter = "blur(10px)";
 				setTimeout(() => {
 					item.style.filter = "blur(0)";
-				}, effectDuration);
+				}, effecttoggleTime);
 
 				setTimeout(() => {
 					overlay.remove();
 					item.style.transition = "none";
 					item.style.filter = "none";
-				}, effectDuration + 1000);
+				}, effecttoggleTime + 1000);
 			};
 
 			const toggleCheck = (listItem) => {
@@ -354,7 +356,7 @@ Module.register("MMM-NextCloud-Tasks", {
 			const startHandler = () => {
 				Log.info("touch/mouse start on item: " + item.id);
 				resetEffects();
-				pressTimer = setTimeout(() => {}, duration);
+				pressTimer = setTimeout(() => {}, toggleTime);
 				startEffects(item);
 			};
 

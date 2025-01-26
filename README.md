@@ -74,6 +74,7 @@ var config = {
 |----------------------|-----------
 | `listUrl`            | *Required*: "Private Link" url from your desired NextCloud task-list. Supports an array of urls from the *same* Nextcloud instance
 | `webDavAuth`         | *Required*: WebDav Authentication object consisting of username and password. <br> Example: `{username: "<NEXTCLOUD_APP_USERNAME>", password: "<NEXTCLOUD_APP_PASSWORD>",}`
+| `toggleTime`         | *Optional*: How long do you need to click / touch the task list item to toggle it. Default `1600` (1.6 seconds)
 | `updateInterval`     | *Optional*: How often should the data be refreshed (in milliseconds)
 | `hideCompletedTasks` | *Optional*: should completed tasks show up or not
 | `sortMethod`         | *Optional*: How to sort tasks. Options: "priority" "priority desc" "created" "created desc" "modified" "modified desc"
@@ -91,10 +92,9 @@ var config = {
 If both conditions `startsInDays`and `dueInDays`are set both are checked after each other. So when one or both conditions are true the task will be shown.
 If you get a *WebDav: Unknown error!* just wait for the next `updateInterval`. It is likely that you fetch your calendar as well from your Nextcloud. My suspicion is that there are too many server requests at the same time. Also, it might be a good idea to use all different prime numbers as `fetchInterval` for your calendar and here for this module (called `updateInterval`) as this minimizes the occurrence of fetching the data at the same time. You can find a list of prime numbers [here](http://compoasso.free.fr/primelistweb/page/prime/liste_online_en.php).
 
-### The glow effect:
-When you toggle a task there is a glow effect which strangely was offset. You will know what I mean if you see that there is s.th. wrong with the effect.
-If that is the case please open an issue - then another setting options needs to be made to fix the overlay. For a quick fix you can change a line of code in `MMM-Nextcloud-Tasks.js':
-`overlay.style.top = (item.offsetTop + 3) + 'px'; // this is a weird thing as the overlay is not exactly on top of the item without the +2`
+### The glow effect bug:
+When you toggle a task there is a glow effect which strangely was offset on windows but not on a Raspberry Pi - or maybe it was the different screen. You will know what I mean if you see that there is s.th. wrong with the effect.
+If that is the case use `offsetTop`and `offsetLeft` (in pixels, default is 0) in the settings to fix it.
 
 ## Screenshots
 
