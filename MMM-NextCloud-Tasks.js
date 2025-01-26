@@ -266,6 +266,7 @@ Module.register("MMM-NextCloud-Tasks", {
 			};
 
 			const startEffects = () => {
+				toggleTime = this.config.toggleTime;
 				startTime = Date.now();
 				const effectSpeed = toggleTime / 50;
 				blurInterval = setInterval(() => {
@@ -302,8 +303,8 @@ Module.register("MMM-NextCloud-Tasks", {
 				const overlay = item.cloneNode(true);
 
 				overlay.style.position = "absolute";
-				overlay.style.top = (item.offsetTop + offsetTop) + "px";
-				overlay.style.left = (item.offsetLeft + offsetLeft)+"px";
+				overlay.style.top = (item.offsetTop + this.config.offsetTop) + "px";
+				overlay.style.left = (item.offsetLeft + this.config.offsetLeft)+"px";
 				overlay.style.color = "red";
 				overlay.style.zIndex = "100000";
 				overlay.style.pointerEvents = "none";
@@ -356,7 +357,7 @@ Module.register("MMM-NextCloud-Tasks", {
 			const startHandler = () => {
 				Log.info("touch/mouse start on item: " + item.id);
 				resetEffects();
-				pressTimer = setTimeout(() => {}, toggleTime);
+				pressTimer = setTimeout(() => {}, this.config.toggleTime);
 				startEffects(item);
 			};
 
